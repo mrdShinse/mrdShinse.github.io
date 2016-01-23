@@ -1,22 +1,22 @@
-.header {
+header {
   height: 65px;
   width: 100%;
   border-bottom: 1px solid #dddddd;
 }
 
-.header .logo {
+header .logo {
   float: left;
   padding: 10px 60px;
   color: #ED7000;
   font-size: 30px;
 }
 
-.header .header-menu {
+header .header-menu {
   float: right;
   color: #808080;
 }
 
-.header .header-menu li {
+header .header-menu li {
   float: left;
   padding: 20px 30px;
   border-left: 1px solid #dddddd;
@@ -25,12 +25,46 @@
 .main {
   width: 100%;
   margin: 0 auto;
+  clear: both;
 }
+
 .content {
-  background-color: #E8E5FF;
   height: 600px;
   width: 70%;
   float: right;
+}
+
+.content h1 {
+  color: #40bfb0;
+  padding: 30px 0px;
+}
+
+.content-top {
+  height: 100px;
+  color: #808080;
+}
+
+.content-top-item {
+  width: 45%;
+  float: left;
+  padding-right: 30px;
+}
+
+.content-top-item h2 {
+  margin-bottom: 10px;
+}
+
+.content-bottom {
+  clear: left;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px 60px;
+  border: 1px solid #808080;
 }
 
 .sidebar {
@@ -47,9 +81,25 @@
   margin-bottom: 10px;
 }
 
-.footer {
-  background-color: #FCFFC0;
-  height: 40px;
+footer {
   width: 100%;
   clear: both;
+  border-top: 1px solid #dddddd;
+}
+
+footer .footer-menu {
+  width: 200px;
+  padding: 30px 30px;
+  float: left;
+}
+
+.footer-menu li {
+  margin-bottom: 5px;
+  color: #808080;
+  border: 1px dotted #808080;
+}
+
+.like-box {
+  float: left;
+  padding: 30px;
 }
