@@ -12,6 +12,7 @@ header .logo img {
   width: 180px;
   height: 45px;
   float: left;
+  opacity: 0.8;
 }
 
 header .header-menu {
@@ -37,13 +38,19 @@ header .header-menu a:hover {
 }
 
 .main .container {
-  height: 1500px;
-  padding: 180px 0px;
-  background-color: blue;
+  width: 100%;
+  padding-top: 45px;
   text-align: center;
 }
 
+.main .top-content {
+  height: 650px;
+  background-image: url(../img/vartical_layout/background.jpg);
+  background-size: cover;
+}
+
 .main .top-content .heading {
+  padding: 150px 0px;
   color: white;
 }
 
@@ -59,9 +66,40 @@ header .header-menu a:hover {
   background-color: gray;
 }
 
+.main-content {
+  height: 300px;
+  padding: 30px 0px;
+}
+
+.main-content .message h2 {
+  margin-bottom: 30px;
+}
+
+.main-content .message p {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.main .second-content .message {
+  width: 50%;
+  float: left;
+}
+
+.main .third-content {
+  background-color: gray;
+  clear: both;
+}
+
+.main .third-content .message{
+  width: 50%;
+  float: right;
+}
+
 footer .container {
   width: 100%;
-  background-color: gray;
+  clear: both;
+  background-color: black;
+  color: white;
 }
 
 footer .copyrights {
