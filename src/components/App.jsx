@@ -14,7 +14,7 @@ export default class App extends React.Component {
         "A", "A#",
         "B"
       ],
-      selected: ""
+      selected: "C"
     }
     this.selectScale = this.selectScale.bind(this);
   }
@@ -29,7 +29,7 @@ export default class App extends React.Component {
               {this.renderOptions()}
             </select>
           </label>
-          <FingeringChart selected={this.state.selected}></FingeringChart>
+          <FingeringChart selectedScale={this.state.selected}></FingeringChart>
         </div>
       </div>
     );

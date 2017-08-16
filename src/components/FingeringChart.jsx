@@ -1,4 +1,6 @@
 import React from 'react';
+import * as tonalScale from 'tonal-scale'
+import * as trumpeter from 'trumpeter'
 
 export default class FingeringChart extends React.Component {
   render() {
@@ -11,7 +13,7 @@ export default class FingeringChart extends React.Component {
   }
 
   renderChart() {
-    if (this.props.selected != null && this.props.selected != undefined && this.props.selected != "" ) {
+    if (this.props.selectedScale != null && this.props.selectedScale != undefined && this.props.selectedScale != "" ) {
       return (
         <table style={{width: '-webkit-fill-available'}}>
           <thead>
@@ -23,17 +25,33 @@ export default class FingeringChart extends React.Component {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>{this.props.selected}</td>
-              <td>1</td>
-              <td>1</td>
-              <td>1</td>
-            </tr>
+            {this.renderFingering()}
           </tbody>
         </table>
       )
     } else {
       return (<h4>Select Scale....</h4>)
     }
+  }
+  renderFingering() {
+    return this.getFingerings(this.props.selectedScale).map(function(data) {
+      return (
+        <tr key={data.note}>
+          <td>{data.note}</td>
+          <td>{data.fingering[0].toString()}</td>
+          <td>{data.fingering[1].toString()}</td>
+          <td>{data.fingering[2].toString()}</td>
+        </tr>
+      )
+    })
+  }
+  getFingerings(scale) {
+    const notes = tonalScale.notes(scale + ' major');
+    return notes.map((note) => {
+      return {
+        note: note,
+        fingering: trumpeter.fingering(note)
+      }
+    })
   }
 }
