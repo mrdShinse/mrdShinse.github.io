@@ -34,16 +34,24 @@ export default class FingeringChart extends React.Component {
     }
   }
   renderFingering() {
+    const self = this;
     return this.getFingerings(this.props.selectedScale).map(function(data) {
       return (
         <tr key={data.note}>
           <td>{data.note}</td>
-          <td>{data.fingering[0].toString()}</td>
-          <td>{data.fingering[1].toString()}</td>
-          <td>{data.fingering[2].toString()}</td>
+          <td>{self.renderFingeringMark(data.fingering[0])}</td>
+          <td>{self.renderFingeringMark(data.fingering[1])}</td>
+          <td>{self.renderFingeringMark(data.fingering[2])}</td>
         </tr>
       )
     })
+  }
+  renderFingeringMark(bool) {
+    if(bool){
+      return "●"
+    }else{
+      return "○"
+    }
   }
   getFingerings(scale) {
     const notes = tonalScale.notes(scale + ' major');
