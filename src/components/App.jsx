@@ -1,5 +1,6 @@
 import React from 'react';
 import FingeringChart from './FingeringChart.jsx';
+require('./App.scss')
 
 export default class App extends React.Component {
   constructor(props) {
@@ -20,7 +21,7 @@ export default class App extends React.Component {
   }
   render() {
     return (
-      <div style={{textAlign: 'center'}}>
+      <div className="container">
         <h1>Trumpet Fingering</h1>
         <div>
           <label>
