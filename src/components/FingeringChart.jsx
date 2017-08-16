@@ -1,4 +1,5 @@
 import React from 'react';
+import * as tonalNote from 'tonal-note'
 import * as tonalScale from 'tonal-scale'
 import * as trumpeter from 'trumpeter'
 
@@ -58,7 +59,7 @@ export default class FingeringChart extends React.Component {
     return notes.map((note) => {
       return {
         note: note,
-        fingering: trumpeter.fingering(note)
+        fingering: trumpeter.fingering(tonalNote.simplify(note))
       }
     })
   }
