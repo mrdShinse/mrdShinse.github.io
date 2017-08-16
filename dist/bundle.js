@@ -23953,7 +23953,7 @@ var FingeringChart = function (_React$Component) {
               _react2.default.createElement(
                 'th',
                 null,
-                'Sound'
+                'Sound(in C)'
               ),
               _react2.default.createElement(
                 'th',
