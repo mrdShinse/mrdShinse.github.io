@@ -24031,9 +24031,10 @@ var FingeringChart = function (_React$Component) {
     value: function getFingerings(scale) {
       var notes = tonalScale.notes(scale + ' major');
       return notes.map(function (note) {
+        var simplifiedNote = tonalNote.simplify(note);
         return {
-          note: note,
-          fingering: trumpeter.fingering(tonalNote.simplify(note))
+          note: simplifiedNote,
+          fingering: trumpeter.fingering(simplifiedNote)
         };
       });
     }
