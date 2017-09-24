@@ -1,6 +1,7 @@
 import React from 'react';
 import * as tonalNote from 'tonal-note'
 import * as tonalScale from 'tonal-scale'
+import * as tonalTranspose from 'tonal-transpose'
 import * as trumpeter from 'trumpeter'
 
 export default class FingeringChart extends React.Component {
@@ -19,6 +20,7 @@ export default class FingeringChart extends React.Component {
         <table style={{width: '-webkit-fill-available'}}>
           <thead>
             <tr>
+              <th>Sound(in Bb)</th>
               <th>Sound(in C)</th>
               <th>1st</th>
               <th>2nd</th>
@@ -40,6 +42,7 @@ export default class FingeringChart extends React.Component {
       return (
         <tr key={data.note}>
           <td>{data.note}</td>
+          <td>{self.fetchInBb(data.note)}</td>
           <td>{self.renderFingeringMark(data.fingering[0])}</td>
           <td>{self.renderFingeringMark(data.fingering[1])}</td>
           <td>{self.renderFingeringMark(data.fingering[2])}</td>
@@ -63,5 +66,8 @@ export default class FingeringChart extends React.Component {
         fingering: trumpeter.fingering(simplifiedNote)
       }
     })
+  }
+  fetchInBb(note) {
+    return tonalTranspose.transpose(note, '7m')
   }
 }

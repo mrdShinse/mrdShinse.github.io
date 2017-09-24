@@ -1286,7 +1286,7 @@ var CallbackQueue = __webpack_require__(66);
 var PooledClass = __webpack_require__(15);
 var ReactFeatureFlags = __webpack_require__(67);
 var ReactReconciler = __webpack_require__(18);
-var Transaction = __webpack_require__(28);
+var Transaction = __webpack_require__(29);
 
 var invariant = __webpack_require__(1);
 
@@ -2028,7 +2028,7 @@ var _assign = __webpack_require__(4);
 var ReactCurrentOwner = __webpack_require__(10);
 
 var warning = __webpack_require__(2);
-var canDefineProperty = __webpack_require__(25);
+var canDefineProperty = __webpack_require__(26);
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 var REACT_ELEMENT_TYPE = __webpack_require__(57);
@@ -2506,7 +2506,7 @@ var cloneElement = ReactElement.cloneElement;
 
 if (process.env.NODE_ENV !== 'production') {
   var lowPriorityWarning = __webpack_require__(37);
-  var canDefineProperty = __webpack_require__(25);
+  var canDefineProperty = __webpack_require__(26);
   var ReactElementValidator = __webpack_require__(59);
   var didWarnPropTypesDeprecated = false;
   createElement = ReactElementValidator.createElement;
@@ -2843,7 +2843,7 @@ module.exports = ReactReconciler;
 
 
 var DOMNamespaces = __webpack_require__(44);
-var setInnerHTML = __webpack_require__(30);
+var setInnerHTML = __webpack_require__(31);
 
 var createMicrosoftUnsafeLocalFunction = __webpack_require__(45);
 var setTextContent = __webpack_require__(71);
@@ -3107,7 +3107,7 @@ module.exports = EventPropagators;
 
 var _prodInvariant = __webpack_require__(3);
 
-var EventPluginRegistry = __webpack_require__(27);
+var EventPluginRegistry = __webpack_require__(28);
 var EventPluginUtils = __webpack_require__(38);
 var ReactErrorUtils = __webpack_require__(39);
 
@@ -3772,6 +3772,91 @@ var pitchFn = decorator(isPitch, parsePitch, strPitch)
 
 /***/ }),
 /* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["transpose"] = transpose;
+/* harmony export (immutable) */ __webpack_exports__["trFifths"] = trFifths;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tonal_pitch__ = __webpack_require__(24);
+/**
+ * This module deals with note transposition. Just two functions: `transpose`
+ * to transpose notes by any interval (or intervals by intervals) and `trFifths`
+ * to transpose notes by fifths.
+ *
+ * @example
+ * var tonal = require('tonal')
+ * tonal.transpose('C3', 'P5') // => 'G3'
+ * tonal.transpose('m2', 'P4') // => '5d'
+ * tonal.trFifths('C', 2) // => 'D'
+ *
+ * @module transpose
+ */
+
+
+function trBy (i, p) {
+  var t = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["k" /* pType */])(p)
+  if (!t) return null
+  var f = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["e" /* fifths */])(i) + Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["e" /* fifths */])(p)
+  if (Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["i" /* isPC */])(p)) return ['tnlp', [f]]
+  var o = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["f" /* focts */])(i) + Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["f" /* focts */])(p)
+  if (t === 'note') return ['tnlp', [f, o]]
+  var d = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["g" /* height */])(i) + Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["g" /* height */])(p) < 0 ? -1 : 1
+  return ['tnlp', [d * f, d * o], d]
+}
+
+/**
+ * Transpose notes. Can be used to add intervals. At least one of the parameter
+ * is expected to be an interval. If not, it returns null.
+ *
+ * @param {String|Pitch} a - a note or interval
+ * @param {String|Pitch} b - a note or interavl
+ * @return {String|Pitch} the transposed pitch or null if not valid parameters
+ * @example
+ * var _ = require('tonal')
+ * // transpose a note by an interval
+ * _.transpose('d3', '3M') // => 'F#3'
+ * // transpose intervals
+ * _.transpose('3m', '5P') // => '7m'
+ * // it works with pitch classes
+ * _.transpose('d', '3M') // => 'F#'
+ * // order or parameters is irrelevant
+ * _.transpose('3M', 'd3') // => 'F#3'
+ * // can be partially applied
+ * _.map(_.transpose('3M'), 'c d e f g') // => ['E', 'F#', 'G#', 'A', 'B']
+ */
+function transpose (a, b) {
+  if (arguments.length === 1) return function (b) { return transpose(a, b) }
+  var pa = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["b" /* asPitch */])(a)
+  var pb = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["b" /* asPitch */])(b)
+  var r = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["h" /* isIvlPitch */])(pa) ? trBy(pa, pb)
+    : Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["h" /* isIvlPitch */])(pb) ? trBy(pb, pa) : null
+  return a === pa && b === pb ? r : Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["p" /* strPitch */])(r)
+}
+
+/**
+ * Transpose a tonic a number of perfect fifths. It can be partially applied.
+ *
+ * @function
+ * @param {Pitch|String} tonic
+ * @param {Integer} number - the number of times
+ * @return {String|Pitch} the transposed note
+ * @example
+ * import { trFifths } from 'tonal-transpose'
+ * [0, 1, 2, 3, 4].map(trFifths('C')) // => ['C', 'G', 'D', 'A', 'E']
+ * // or using tonal
+ * tonal.trFifths('G4', 1) // => 'D5'
+ */
+function trFifths (t, n) {
+  if (arguments.length > 1) return trFifths(t)(n)
+  return function (n) {
+    return transpose(t, Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["m" /* pitch */])(n, 0, 1))
+  }
+}
+
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3803,7 +3888,7 @@ module.exports = canDefineProperty;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3829,7 +3914,7 @@ module.exports = emptyObject;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4088,7 +4173,7 @@ module.exports = EventPluginRegistry;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4322,7 +4407,7 @@ module.exports = TransactionImpl;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4399,7 +4484,7 @@ SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 module.exports = SyntheticMouseEvent;
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4502,7 +4587,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = setInnerHTML;
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4629,7 +4714,7 @@ function escapeTextContentForBrowser(text) {
 module.exports = escapeTextContentForBrowser;
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4647,7 +4732,7 @@ module.exports = escapeTextContentForBrowser;
 
 var _assign = __webpack_require__(4);
 
-var EventPluginRegistry = __webpack_require__(27);
+var EventPluginRegistry = __webpack_require__(28);
 var ReactEventEmitterMixin = __webpack_require__(140);
 var ViewportMetrics = __webpack_require__(70);
 
@@ -4958,7 +5043,7 @@ var ReactBrowserEventEmitter = _assign({}, ReactEventEmitterMixin, {
 module.exports = ReactBrowserEventEmitter;
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4980,7 +5065,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["simplify"] = simplify;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_note_parser__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_tonal_pitch__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_tonal_transpose__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_tonal_transpose__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_tonal_midi__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_tonal_freq__ = __webpack_require__(195);
 /**
@@ -5251,10 +5336,10 @@ var DESC = Object(__WEBPACK_IMPORTED_MODULE_1_tonal_pitch__["l" /* parseIvl */])
  */
 function enharmonics (pitch) {
   var notes = []
-  notes.push(Object(__WEBPACK_IMPORTED_MODULE_2_tonal_transpose__["a" /* transpose */])(DESC, pitch))
+  notes.push(Object(__WEBPACK_IMPORTED_MODULE_2_tonal_transpose__["transpose"])(DESC, pitch))
   if (notes[0] === null) return null
   notes.push(pitch)
-  notes.push(Object(__WEBPACK_IMPORTED_MODULE_2_tonal_transpose__["a" /* transpose */])(ASC, pitch))
+  notes.push(Object(__WEBPACK_IMPORTED_MODULE_2_tonal_transpose__["transpose"])(ASC, pitch))
   return notes
 }
 
@@ -5277,90 +5362,6 @@ function simplify (pitch) {
 
 
 /***/ }),
-/* 34 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = transpose;
-/* unused harmony export trFifths */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tonal_pitch__ = __webpack_require__(24);
-/**
- * This module deals with note transposition. Just two functions: `transpose`
- * to transpose notes by any interval (or intervals by intervals) and `trFifths`
- * to transpose notes by fifths.
- *
- * @example
- * var tonal = require('tonal')
- * tonal.transpose('C3', 'P5') // => 'G3'
- * tonal.transpose('m2', 'P4') // => '5d'
- * tonal.trFifths('C', 2) // => 'D'
- *
- * @module transpose
- */
-
-
-function trBy (i, p) {
-  var t = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["k" /* pType */])(p)
-  if (!t) return null
-  var f = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["e" /* fifths */])(i) + Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["e" /* fifths */])(p)
-  if (Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["i" /* isPC */])(p)) return ['tnlp', [f]]
-  var o = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["f" /* focts */])(i) + Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["f" /* focts */])(p)
-  if (t === 'note') return ['tnlp', [f, o]]
-  var d = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["g" /* height */])(i) + Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["g" /* height */])(p) < 0 ? -1 : 1
-  return ['tnlp', [d * f, d * o], d]
-}
-
-/**
- * Transpose notes. Can be used to add intervals. At least one of the parameter
- * is expected to be an interval. If not, it returns null.
- *
- * @param {String|Pitch} a - a note or interval
- * @param {String|Pitch} b - a note or interavl
- * @return {String|Pitch} the transposed pitch or null if not valid parameters
- * @example
- * var _ = require('tonal')
- * // transpose a note by an interval
- * _.transpose('d3', '3M') // => 'F#3'
- * // transpose intervals
- * _.transpose('3m', '5P') // => '7m'
- * // it works with pitch classes
- * _.transpose('d', '3M') // => 'F#'
- * // order or parameters is irrelevant
- * _.transpose('3M', 'd3') // => 'F#3'
- * // can be partially applied
- * _.map(_.transpose('3M'), 'c d e f g') // => ['E', 'F#', 'G#', 'A', 'B']
- */
-function transpose (a, b) {
-  if (arguments.length === 1) return function (b) { return transpose(a, b) }
-  var pa = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["b" /* asPitch */])(a)
-  var pb = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["b" /* asPitch */])(b)
-  var r = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["h" /* isIvlPitch */])(pa) ? trBy(pa, pb)
-    : Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["h" /* isIvlPitch */])(pb) ? trBy(pb, pa) : null
-  return a === pa && b === pb ? r : Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["p" /* strPitch */])(r)
-}
-
-/**
- * Transpose a tonic a number of perfect fifths. It can be partially applied.
- *
- * @function
- * @param {Pitch|String} tonic
- * @param {Integer} number - the number of times
- * @return {String|Pitch} the transposed note
- * @example
- * import { trFifths } from 'tonal-transpose'
- * [0, 1, 2, 3, 4].map(trFifths('C')) // => ['C', 'G', 'D', 'A', 'E']
- * // or using tonal
- * tonal.trFifths('G4', 1) // => 'D5'
- */
-function trFifths (t, n) {
-  if (arguments.length > 1) return trFifths(t)(n)
-  return function (n) {
-    return transpose(t, Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["m" /* pitch */])(n, 0, 1))
-  }
-}
-
-
-/***/ }),
 /* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5376,7 +5377,7 @@ function trFifths (t, n) {
 /* unused harmony export select */
 /* unused harmony export permutations */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tonal_pitch__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_tonal_transpose__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_tonal_transpose__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_tonal_distance__ = __webpack_require__(88);
 /**
  * This module implements utility functions related to array manipulation, like:
@@ -5570,7 +5571,7 @@ var shuffle = listFn(function (arr) {
 })
 
 function trOct (n) {
-  return Object(__WEBPACK_IMPORTED_MODULE_1_tonal_transpose__["a" /* transpose */])(Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["m" /* pitch */])(0, n, 1))
+  return Object(__WEBPACK_IMPORTED_MODULE_1_tonal_transpose__["transpose"])(Object(__WEBPACK_IMPORTED_MODULE_0_tonal_pitch__["m" /* pitch */])(0, n, 1))
 }
 
 /**
@@ -6262,7 +6263,7 @@ var ReactDOMComponentTree = __webpack_require__(5);
 var ReactInstrumentation = __webpack_require__(8);
 
 var createMicrosoftUnsafeLocalFunction = __webpack_require__(45);
-var setInnerHTML = __webpack_require__(30);
+var setInnerHTML = __webpack_require__(31);
 var setTextContent = __webpack_require__(71);
 
 function getNodeAfter(parentNode, node) {
@@ -7817,8 +7818,8 @@ var _prodInvariant = __webpack_require__(17),
 
 var ReactNoopUpdateQueue = __webpack_require__(56);
 
-var canDefineProperty = __webpack_require__(25);
-var emptyObject = __webpack_require__(26);
+var canDefineProperty = __webpack_require__(26);
+var emptyObject = __webpack_require__(27);
 var invariant = __webpack_require__(1);
 var lowPriorityWarning = __webpack_require__(37);
 
@@ -8146,7 +8147,7 @@ var ReactElement = __webpack_require__(14);
 
 var checkReactTypeSpec = __webpack_require__(95);
 
-var canDefineProperty = __webpack_require__(25);
+var canDefineProperty = __webpack_require__(26);
 var getIteratorFn = __webpack_require__(58);
 var warning = __webpack_require__(2);
 var lowPriorityWarning = __webpack_require__(37);
@@ -8971,8 +8972,8 @@ module.exports = ViewportMetrics;
 
 
 var ExecutionEnvironment = __webpack_require__(6);
-var escapeTextContentForBrowser = __webpack_require__(31);
-var setInnerHTML = __webpack_require__(30);
+var escapeTextContentForBrowser = __webpack_require__(32);
+var setInnerHTML = __webpack_require__(31);
 
 /**
  * Set the textContent property of a node, ensuring that whitespace is preserved
@@ -10419,7 +10420,7 @@ var _prodInvariant = __webpack_require__(3);
 var DOMLazyTree = __webpack_require__(19);
 var DOMProperty = __webpack_require__(13);
 var React = __webpack_require__(16);
-var ReactBrowserEventEmitter = __webpack_require__(32);
+var ReactBrowserEventEmitter = __webpack_require__(33);
 var ReactCurrentOwner = __webpack_require__(10);
 var ReactDOMComponentTree = __webpack_require__(5);
 var ReactDOMContainerInfo = __webpack_require__(181);
@@ -10432,10 +10433,10 @@ var ReactReconciler = __webpack_require__(18);
 var ReactUpdateQueue = __webpack_require__(51);
 var ReactUpdates = __webpack_require__(11);
 
-var emptyObject = __webpack_require__(26);
+var emptyObject = __webpack_require__(27);
 var instantiateReactComponent = __webpack_require__(77);
 var invariant = __webpack_require__(1);
-var setInnerHTML = __webpack_require__(30);
+var setInnerHTML = __webpack_require__(31);
 var shouldUpdateReactComponent = __webpack_require__(49);
 var warning = __webpack_require__(2);
 
@@ -12710,7 +12711,7 @@ module.exports = factory(Component, isValidElement, ReactNoopUpdateQueue);
 
 var _assign = __webpack_require__(4);
 
-var emptyObject = __webpack_require__(26);
+var emptyObject = __webpack_require__(27);
 var _invariant = __webpack_require__(1);
 
 if (process.env.NODE_ENV !== 'production') {
@@ -15560,7 +15561,7 @@ module.exports = DefaultEventPluginOrder;
 
 var EventPropagators = __webpack_require__(20);
 var ReactDOMComponentTree = __webpack_require__(5);
-var SyntheticMouseEvent = __webpack_require__(29);
+var SyntheticMouseEvent = __webpack_require__(30);
 
 var eventTypes = {
   mouseEnter: {
@@ -16361,8 +16362,8 @@ var DOMNamespaces = __webpack_require__(44);
 var DOMProperty = __webpack_require__(13);
 var DOMPropertyOperations = __webpack_require__(74);
 var EventPluginHub = __webpack_require__(21);
-var EventPluginRegistry = __webpack_require__(27);
-var ReactBrowserEventEmitter = __webpack_require__(32);
+var EventPluginRegistry = __webpack_require__(28);
+var ReactBrowserEventEmitter = __webpack_require__(33);
 var ReactDOMComponentFlags = __webpack_require__(62);
 var ReactDOMComponentTree = __webpack_require__(5);
 var ReactDOMInput = __webpack_require__(142);
@@ -16374,7 +16375,7 @@ var ReactMultiChild = __webpack_require__(145);
 var ReactServerRenderingTransaction = __webpack_require__(154);
 
 var emptyFunction = __webpack_require__(9);
-var escapeTextContentForBrowser = __webpack_require__(31);
+var escapeTextContentForBrowser = __webpack_require__(32);
 var invariant = __webpack_require__(1);
 var isEventSupported = __webpack_require__(41);
 var shallowEqual = __webpack_require__(48);
@@ -17899,7 +17900,7 @@ module.exports = memoizeStringOnly;
 
 
 
-var escapeTextContentForBrowser = __webpack_require__(31);
+var escapeTextContentForBrowser = __webpack_require__(32);
 
 /**
  * Escapes attribute value to prevent scripting attacks.
@@ -19287,7 +19288,7 @@ if (process.env.NODE_ENV !== 'production') {
   var checkReactTypeSpec = __webpack_require__(148);
 }
 
-var emptyObject = __webpack_require__(26);
+var emptyObject = __webpack_require__(27);
 var invariant = __webpack_require__(1);
 var shallowEqual = __webpack_require__(48);
 var shouldUpdateReactComponent = __webpack_require__(49);
@@ -20483,7 +20484,7 @@ module.exports = flattenChildren;
 var _assign = __webpack_require__(4);
 
 var PooledClass = __webpack_require__(15);
-var Transaction = __webpack_require__(28);
+var Transaction = __webpack_require__(29);
 var ReactInstrumentation = __webpack_require__(8);
 var ReactServerUpdateQueue = __webpack_require__(155);
 
@@ -20935,7 +20936,7 @@ var DOMChildrenOperations = __webpack_require__(43);
 var DOMLazyTree = __webpack_require__(19);
 var ReactDOMComponentTree = __webpack_require__(5);
 
-var escapeTextContentForBrowser = __webpack_require__(31);
+var escapeTextContentForBrowser = __webpack_require__(32);
 var invariant = __webpack_require__(1);
 var validateDOMNesting = __webpack_require__(52);
 
@@ -21099,7 +21100,7 @@ module.exports = ReactDOMTextComponent;
 var _assign = __webpack_require__(4);
 
 var ReactUpdates = __webpack_require__(11);
-var Transaction = __webpack_require__(28);
+var Transaction = __webpack_require__(29);
 
 var emptyFunction = __webpack_require__(9);
 
@@ -21378,7 +21379,7 @@ var EventPluginHub = __webpack_require__(21);
 var EventPluginUtils = __webpack_require__(38);
 var ReactComponentEnvironment = __webpack_require__(47);
 var ReactEmptyComponent = __webpack_require__(79);
-var ReactBrowserEventEmitter = __webpack_require__(32);
+var ReactBrowserEventEmitter = __webpack_require__(33);
 var ReactHostComponent = __webpack_require__(80);
 var ReactUpdates = __webpack_require__(11);
 
@@ -21416,10 +21417,10 @@ var _assign = __webpack_require__(4);
 
 var CallbackQueue = __webpack_require__(66);
 var PooledClass = __webpack_require__(15);
-var ReactBrowserEventEmitter = __webpack_require__(32);
+var ReactBrowserEventEmitter = __webpack_require__(33);
 var ReactInputSelection = __webpack_require__(83);
 var ReactInstrumentation = __webpack_require__(8);
-var Transaction = __webpack_require__(28);
+var Transaction = __webpack_require__(29);
 var ReactUpdateQueue = __webpack_require__(51);
 
 /**
@@ -22508,7 +22509,7 @@ var SyntheticClipboardEvent = __webpack_require__(173);
 var SyntheticEvent = __webpack_require__(12);
 var SyntheticFocusEvent = __webpack_require__(174);
 var SyntheticKeyboardEvent = __webpack_require__(175);
-var SyntheticMouseEvent = __webpack_require__(29);
+var SyntheticMouseEvent = __webpack_require__(30);
 var SyntheticDragEvent = __webpack_require__(177);
 var SyntheticTouchEvent = __webpack_require__(178);
 var SyntheticTransitionEvent = __webpack_require__(179);
@@ -23063,7 +23064,7 @@ module.exports = getEventKey;
 
 
 
-var SyntheticMouseEvent = __webpack_require__(29);
+var SyntheticMouseEvent = __webpack_require__(30);
 
 /**
  * @interface DragEvent
@@ -23198,7 +23199,7 @@ module.exports = SyntheticTransitionEvent;
 
 
 
-var SyntheticMouseEvent = __webpack_require__(29);
+var SyntheticMouseEvent = __webpack_require__(30);
 
 /**
  * @interface WheelEvent
@@ -23528,7 +23529,7 @@ module.exports = ReactMount.renderSubtreeIntoContainer;
 
 
 var DOMProperty = __webpack_require__(13);
-var EventPluginRegistry = __webpack_require__(27);
+var EventPluginRegistry = __webpack_require__(28);
 var ReactComponentTreeHook = __webpack_require__(7);
 
 var warning = __webpack_require__(2);
@@ -23845,7 +23846,8 @@ var App = function (_React$Component) {
               'select',
               { onChange: this.selectScale },
               this.renderOptions()
-            )
+            ),
+            '(inBb)'
           ),
           _react2.default.createElement(_FingeringChart2.default, { selectedScale: this.state.selected })
         )
@@ -23894,13 +23896,17 @@ var _react = __webpack_require__(36);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _tonalNote = __webpack_require__(33);
+var _tonalNote = __webpack_require__(34);
 
 var tonalNote = _interopRequireWildcard(_tonalNote);
 
 var _tonalScale = __webpack_require__(196);
 
 var tonalScale = _interopRequireWildcard(_tonalScale);
+
+var _tonalTranspose = __webpack_require__(25);
+
+var tonalTranspose = _interopRequireWildcard(_tonalTranspose);
 
 var _trumpeter = __webpack_require__(201);
 
@@ -23955,6 +23961,11 @@ var FingeringChart = function (_React$Component) {
               _react2.default.createElement(
                 'th',
                 null,
+                'Sound(in Bb)'
+              ),
+              _react2.default.createElement(
+                'th',
+                null,
                 'Sound(in C)'
               ),
               _react2.default.createElement(
@@ -24004,6 +24015,11 @@ var FingeringChart = function (_React$Component) {
           _react2.default.createElement(
             'td',
             null,
+            self.fetchInBb(data.note)
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
             self.renderFingeringMark(data.fingering[0])
           ),
           _react2.default.createElement(
@@ -24039,6 +24055,11 @@ var FingeringChart = function (_React$Component) {
           fingering: trumpeter.fingering(simplifiedNote)
         };
       });
+    }
+  }, {
+    key: 'fetchInBb',
+    value: function fetchInBb(note) {
+      return tonalTranspose.transpose(note, '7m');
     }
   }]);
 
@@ -24436,7 +24457,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "detect", function() { return detect; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tonal_dictionary__ = __webpack_require__(197);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_tonal_array__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_tonal_note__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_tonal_note__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_tonal_harmonizer__ = __webpack_require__(199);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__scales_json__ = __webpack_require__(200);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__scales_json___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__scales_json__);
@@ -24599,7 +24620,7 @@ var detect = Object(__WEBPACK_IMPORTED_MODULE_0_tonal_dictionary__["a" /* detect
 /* harmony export (immutable) */ __webpack_exports__["b"] = dictionary;
 /* harmony export (immutable) */ __webpack_exports__["a"] = detector;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tonal_array__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_tonal_note__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_tonal_note__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_tonal_pcset__ = __webpack_require__(198);
 
 
@@ -24746,9 +24767,9 @@ function detector (dict, build) {
 /* unused harmony export includes */
 /* unused harmony export filter */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tonal_pitch__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_tonal_note__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_tonal_note__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_tonal_array__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_tonal_transpose__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_tonal_transpose__ = __webpack_require__(25);
 /**
  * [![npm version](https://img.shields.io/npm/v/tonal-pcset.svg?style=flat-square)](https://www.npmjs.com/package/tonal-pcset)
  * [![tonal](https://img.shields.io/badge/tonal-pcset-yellow.svg?style=flat-square)](https://www.npmjs.com/browse/keyword/tonal)
@@ -24891,7 +24912,7 @@ function fromChroma (binary, tonic) {
   console.warn('pcset.fromChroma is deprecated. Use pcset.intervals().map(...)')
   if (arguments.length === 1) return function (t) { return fromChroma(binary, t) }
   if (!tonic) tonic = 'P1'
-  return intervals(binary).map(Object(__WEBPACK_IMPORTED_MODULE_3_tonal_transpose__["a" /* transpose */])(tonic))
+  return intervals(binary).map(Object(__WEBPACK_IMPORTED_MODULE_3_tonal_transpose__["transpose"])(tonic))
 }
 
 /**
@@ -24990,7 +25011,7 @@ function filter (set, notes) {
 /* unused harmony export harmonics */
 /* unused harmony export intervallic */
 /* harmony export (immutable) */ __webpack_exports__["a"] = harmonize;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tonal_transpose__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tonal_transpose__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_tonal_distance__ = __webpack_require__(88);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_tonal_array__ = __webpack_require__(35);
 /**
@@ -25085,7 +25106,7 @@ function intervallic (notes) {
 function harmonize (list, pitch) {
   if (arguments.length > 1) return harmonize(list)(pitch)
   return function (tonic) {
-    return Object(__WEBPACK_IMPORTED_MODULE_2_tonal_array__["b" /* compact */])(Object(__WEBPACK_IMPORTED_MODULE_2_tonal_array__["c" /* map */])(Object(__WEBPACK_IMPORTED_MODULE_0_tonal_transpose__["a" /* transpose */])(tonic || 'P1'), list))
+    return Object(__WEBPACK_IMPORTED_MODULE_2_tonal_array__["b" /* compact */])(Object(__WEBPACK_IMPORTED_MODULE_2_tonal_array__["c" /* map */])(Object(__WEBPACK_IMPORTED_MODULE_0_tonal_transpose__["transpose"])(tonic || 'P1'), list))
   }
 }
 

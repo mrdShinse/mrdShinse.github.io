@@ -29,6 +29,7 @@ export default class App extends React.Component {
             <select onChange={this.selectScale}>
               {this.renderOptions()}
             </select>
+            (inBb)
           </label>
           <FingeringChart selectedScale={this.state.selected}></FingeringChart>
         </div>
