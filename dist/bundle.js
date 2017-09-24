@@ -23960,13 +23960,27 @@ var FingeringChart = function (_React$Component) {
               null,
               _react2.default.createElement(
                 'th',
+                { colSpan: 2 },
+                'Sounds'
+              ),
+              _react2.default.createElement(
+                'th',
+                { colSpan: 3 },
+                'Fingerings'
+              )
+            ),
+            _react2.default.createElement(
+              'tr',
+              null,
+              _react2.default.createElement(
+                'th',
                 null,
-                'Sound(in Bb)'
+                'in Bb'
               ),
               _react2.default.createElement(
                 'th',
                 null,
-                'Sound(in C)'
+                'in C'
               ),
               _react2.default.createElement(
                 'th',

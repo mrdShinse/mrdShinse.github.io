@@ -20,8 +20,12 @@ export default class FingeringChart extends React.Component {
         <table style={{width: '-webkit-fill-available'}}>
           <thead>
             <tr>
-              <th>Sound(in Bb)</th>
-              <th>Sound(in C)</th>
+              <th colSpan={2}>Sounds</th>
+              <th colSpan={3}>Fingerings</th>
+            </tr>
+            <tr>
+              <th>in Bb</th>
+              <th>in C</th>
               <th>1st</th>
               <th>2nd</th>
               <th>3rd</th>
