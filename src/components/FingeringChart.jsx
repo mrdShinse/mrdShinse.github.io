@@ -15,7 +15,7 @@ export default class FingeringChart extends React.Component {
   }
 
   renderChart() {
-    if (this.props.selectedScale != null && this.props.selectedScale != undefined && this.props.selectedScale != "" ) {
+    if (this.props.selected != null && this.props.selected != undefined && this.props.selected != {} ) {
       return (
         <table style={{width: '-webkit-fill-available'}}>
           <thead>
@@ -42,7 +42,7 @@ export default class FingeringChart extends React.Component {
   }
   renderFingering() {
     const self = this;
-    return this.getFingerings(this.props.selectedScale).map(function(data) {
+    return this.getFingerings(this.props.selected).map(function(data) {
       return (
         <tr key={data.note}>
           <td>{data.note}</td>
@@ -61,8 +61,8 @@ export default class FingeringChart extends React.Component {
       return "○"
     }
   }
-  getFingerings(scale) {
-    const notes = tonalScale.notes(scale + ' major');
+  getFingerings(input) {
+    const notes = tonalScale.notes(input.root + ' ' + input.scale);
     return notes.map((note) => {
       const simplifiedNote = tonalNote.simplify(note)
       return {
